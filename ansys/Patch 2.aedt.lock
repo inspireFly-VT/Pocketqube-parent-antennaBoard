@@ -1,5 +1,5 @@
 $begin 'ConnectionParameters'
-	DesktopProcessID=60076
+	DesktopProcessID=44356
 	DesktopProcessPath='D:\\Program Files\\ANSYS Inc\\v251\\AnsysEM\\ansysedt.exe'
 	LaunchedByWB=false
 	GRPCPort=50051
@@ -7,12 +7,12 @@ $begin 'ConnectionParameters'
 		$begin 'CommDetails'
 			TransportType=1
 			IPAddress='172.18.224.1'
-			ListenPort='60586'
-			IPAddressVector[2: '192.168.56.1', '172.29.223.216']
+			ListenPort='62205'
+			IPAddressVector[3: '45.3.127.37', '192.168.56.1', '192.168.0.8']
 		$end 'CommDetails'
 		$begin 'Marshall'
 			InstanceID=503
-			ProcID=60076
+			ProcID=44356
 			InterfaceID=1
 			FactoryIntID='DesktopInterfaceForWBProxyStubFactory'
 		$end 'Marshall'
@@ -21,12 +21,12 @@ $begin 'ConnectionParameters'
 		$begin 'CommDetails'
 			TransportType=1
 			IPAddress='172.18.224.1'
-			ListenPort='60586'
-			IPAddressVector[2: '192.168.56.1', '172.29.223.216']
+			ListenPort='62205'
+			IPAddressVector[3: '45.3.127.37', '192.168.56.1', '192.168.0.8']
 		$end 'CommDetails'
 		$begin 'Marshall'
 			InstanceID=505
-			ProcID=60076
+			ProcID=44356
 			InterfaceID=2
 			FactoryIntID='DesktopInterfaceForWBProxyStubFactory'
 		$end 'Marshall'
