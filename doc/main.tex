@@ -1,0 +1,70 @@
+%
+% main.tex
+%
+% Copyright (C) 2025 by Inspirefly.
+%
+% 2.305 GHz Patch Antenna Documentation
+%
+
+%
+% \brief Main file.
+%
+% \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
+%
+% \institution Universidade Federal de Santa Catarina (UFSC)
+%
+% \version 1.2.0
+%
+% \date 2021/01/16
+%
+
+\documentclass[a4paper,12pt]{book}
+
+\usepackage{spacelab_book}
+
+\title{Patch Documentation}
+\author{Inspirefly}
+\date{\today}
+
+% File metadata
+\hypersetup
+{
+    pdfauthor   = {Inspirefly},
+    pdfsubject  = {\thetitle},
+    pdftitle    = {\thetitle},
+    pdfkeywords = {CubeSats, Telecommunications}
+}
+
+\begin{document}
+
+    \pagenumbering{roman}
+    \setcounter{page}{1}
+
+    \input{header/titlepage}
+    \cleardoublepage
+    \input{header/authorpage}
+    \cleardoublepage
+
+    \listoffigures
+    \addcontentsline{toc}{chapter}{List of Figures}
+
+    \listoftables
+    \addcontentsline{toc}{chapter}{List of Tables}
+
+    \printnomenclature
+    \addcontentsline{toc}{chapter}{Nomenclature}
+
+    \tableofcontents
+    \cleardoublepage
+    
+    \pagenumbering{arabic}
+    \setcounter{page}{1}
+
+    \input{chapters/Introduction}
+    \input{chapters/Methodology}
+    \input{chapters/Results}
+    \input{chapters/Discussion}
+    \input{chapters/Conclusion}
+    \input{chapters/Acknowledgments}
+
+\end{document}
