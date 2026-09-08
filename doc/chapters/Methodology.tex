@@ -98,11 +98,11 @@ Rapid design-space exploration was performed in MATLAB R2024b Antenna Toolbox (\
 
 Three variables are optimized by particle swarm (\texttt{particleswarm}, SwarmSize~400, MaxIterations~1000, UseParallel~true):
 
-\begin{itemize}[noitemsep]
+\begin{enumerate}[itemsep=-1ex]
     \item $W = \mathrm{Board\_W} \in [10, 50]$~mm,
     \item $\mathrm{PatchFrac} \in [0.01, 0.5]$,
     \item $\mathrm{FeedFrac} \in [-0.9, 0.9]$, defining the feed offset $(\!- \mathrm{FeedFrac}\,W/2,\; \mathrm{FeedFrac}\,W/2)$.
-\end{itemize}
+\end{enumerate}
 
 The cost function is
 
@@ -117,26 +117,24 @@ Optimization logs are written to \texttt{matlab/logs/run\_log\_n.txt} with an au
 
 Full-wave verification is performed in ANSYS Electronics Desktop / HFSS, which solves the time-harmonic Maxwell equations by the finite-element method. Four AEDT projects are retained in \path{ansys/} for provenance:
 
-\begin{itemize}[noitemsep]
+\begin{enumerate}[itemsep=-1ex]
     \item \texttt{Patch 2.aedt}: early rectangular/coplanar iteration (Nov 2025).
     \item \texttt{HexagonalPatch.aedt}: hexagonal patch variant to reduce area (Dec 2025).
     \item \texttt{CircularPatch.aedt}: first circular patch with single probe (Dec 2025).
     \item \texttt{CircularPatchV3.aedt}: final circular patch with two orthogonal coax feeds for the 1U face (Feb 2026, “Two coax approach for 1U design”).
-\end{itemize}
+\end{enumerate}
 
 Each model defines the patch radius as a design variable, the FR-408HR (or early RO4350B) substrate, a finite ground plane matching the 50~mm board, a radiation boundary at $\lambda_0/4$ distance, and lumped or wave ports at the coax feeds. Frequency sweeps are centered at 2.305~GHz with interpolating sweep to capture $S_{11}$ and far-field gain/axial ratio. Far-field setup computes realized gain, directivity, and axial ratio versus $\theta,\phi$. Convergence is judged by $\Delta S < 0.02$ between adaptive passes.
 
 \section{KiCAD Layout and DXF Flow}
 
-Layout is implemented in KiCAD 10.0 (\path{KiCAD/antennaBoard/}). The patch geometry is drawn in a mechanical CAD tool and exported as \path{KiCAD/CircularPatchV3.dxf}. A Python utility \path{KiCAD/antennaBoard/dxf_to_kicad_mod/dxf_to_kicad_mod.py} converts the DXF polygon to the KiCAD footprint \path{Inspirefly.pretty/CircularPatchAntenna.kicad_mod}. The footprint defines a single SMD pad (number 1) with a custom polygonal shape: an approximately 38~mm diameter circle formed by $\sim$140 vertices, with two 5.16~mm wide slot cutouts that define the linear slot perimeter referenced in the early calculation. The courtyard is $51.85 \times 51.89$~mm, aligned to the PocketQube 50~mm envelope with margin.
+Layout is implemented in KiCAD 10.0 (\path{KiCAD/antennaBoard/}). The antenna was exported as a DXF, imported to KiCAD, and filled as footprint \path{Inspirefly.pretty/CircularPatchAntenna.kicad_mod}. The schematic (\texttt{antennaBoard.kicad\_sch}) contains:
 
-The schematic (\texttt{antennaBoard.kicad\_sch}) contains:
-
-\begin{itemize}[noitemsep]
+\begin{enumerate}[itemsep=-1ex]
     \item \texttt{ANT1}: the circular patch antenna footprint.
     \item Two \texttt{Conn\_Coaxial} symbols (J1, J2) mapped to Molex 732511350 U.FL-compatible footprints (\path{Connector_Coaxial.pretty/CONN_732511350_MOL.kicad_mod}), added on branch \texttt{to-be-reviewed\_V0.1} with the note “Use external power divider: APS-02-WBM-LP-DF-CC”.
     \item An SMA edge-mount (Amphenol 132289) retained as an alternative test port.
-\end{itemize}
+\end{enumerate}
 
 The two coax centre pins are routed on B.Cu to the patch vias; the ground shells connect to the B.Cu ground plane with stitching vias. Design-rule checks enforce 0.2~mm trace width and 0.3~mm drill. Gerber export uses the KiCAD 10.0 \texttt{pcbplotparams} with Gerber X2 attributes and Excellon drill.
 

@@ -49,7 +49,7 @@ This run is retained as evidence that the analytical radius must be used as a ti
 
 \subsection{Evolution Across Geometries}
 
-\begin{enumerate}
+\begin{enumerate}[itemsep=-1ex]
 
     \item \textbf{Rectangular / Patch 2} (\texttt{Patch 2.aedt}, Nov 2025): early sweep of a rectangular patch with slot. $S_{11}$ minima were found near 2.3~GHz but with narrow 10~MHz bandwidth and strong sensitivity to $h$.
 
@@ -69,7 +69,7 @@ The HFSS-tuned physical radius for FR-408HR converges to $19.0$--$19.5$~mm, with
 
 \section{Visual History of Patch Evolution}
 
-A chronological set of HFSS screenshots is retained in \path{doc/history/}. Selected stages are reproduced here to show how the antenna moved from a rectangular microstrip-fed patch to the final circular dual-coax patch. The chat history in \path{history/chat-history.txt} informed feed, substrate, and stackup choices but is not quoted verbatim.
+A chronological set of HFSS screenshots is retained in \path{doc/history/}. Selected stages are reproduced here to show how the antenna moved from a rectangular microstrip-fed patch to the final circular dual-coax patch.
 
 \begin{figure}[H]
 \centering
@@ -138,15 +138,14 @@ A chronological set of HFSS screenshots is retained in \path{doc/history/}. Sele
 
 The final board (\path{KiCAD/antennaBoard/antennaBoard.kicad_pcb}, branch \texttt{to-be-reviewed\_V0.1}) contains three footprints: \texttt{ANT1} (\texttt{Inspirefly:CircularPatchAntenna}) at $(157.99, 98.55)$~mm, and two Molex 732511350 U.FL-compatible connectors J1/J2 on F.Cu. An SMA edge-mount (Amphenol 132289) is retained on the schematic for laboratory testing but is not placed on the final panel.
 
-Key construction:
-\begin{itemize}
+\begin{enumerate}[itemsep=-1ex]
     \setlength \itemsep{0.1em}
     \item Stackup as in Table~\ref{tab:stackup}, total thickness 1.3414~mm, copper finish None (ENIG to be specified at fabrication).
     \item Patch pad: custom polygon on F.Cu/F.Mask/F.Paste, net \texttt{Net-(ANT1-A)}, with two rectangular slot cutouts that form the radiating aperture. The pad is the only copper on F.Cu inside the courtyard.
     \item Feeds: two vias at $(157.99, 88.90)$~mm and $(169.93, 100.84)$~mm (board coordinates), each $0.6$~mm pad, $0.3$~mm drill, connecting F.Cu to B.Cu. Stitching vias tie the B.Cu ground to the connector shells.
     \item Board outline: rectangle $51.85 \times 51.89$~mm on Edge.Cuts, with 0.05~mm courtyard stroke.
     \item External feed network: the two U.FL ports are intended to connect via phase-matched coax to the APS-02-WBM-LP-DF-CC 2-way $0^{\circ}/90^{\circ}$ divider, which provides the quadrature phase for RHCP. Measured insertion loss of the divider (vendor data: $\sim 0.4$~dB) and cable loss are budgeted separately from antenna gain.
-\end{itemize}
+\end{enumerate}
 
 \newpage
 
