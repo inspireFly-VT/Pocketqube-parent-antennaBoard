@@ -8,19 +8,15 @@
 
 \chapter{Introduction}
 
-The PocketQube form factor constrains the entire spacecraft to a $50 \times 50 \times 50$~mm cube per unit (1P), with mass below 250~g. For the Inspirefly parent spacecraft, which relays telemetry and payload data from deployed child PocketQubes, the available exterior area for antennas is limited to one face of the structure. A low-profile, directive antenna that can be integrated directly into the printed circuit board (PCB) is therefore preferable to deployable monopoles or large ground-plane-dependent structures.
-
-This document records the design of a 2.305~GHz centered circular microstrip patch antenna for the PocketQube parent antenna board. The frequency was selected to provide an S-band downlink/uplink channel separate from UHF telemetry, with sufficient bandwidth for higher data rates and with regulatory compatibility in the 2.3--2.4~GHz region. The antenna is realized as a probe-fed circular patch on a multilayer PCB, with two orthogonal feed points intended for circular polarization through an external quadrature power divider.
+The 1P PocketQube is a $50 \times 50 \times 50$~mm cube, with mass below 250~g. This document records the design of a 2.305~GHz centered circular microstrip patch antenna for the PocketQube parent antenna board. The frequency was selected to provide an S-band downlink/uplink channel separate from UHF telemetry, with sufficient bandwidth for higher data rates and with regulatory compatibility in the 2.25--2.35~GHz region. The antenna is realized as a probe-fed circular patch on a multilayer PCB, with two orthogonal feed points intended for circular polarization through an external quadrature power divider.
 
 \section{Why a Circular Patch}
 
-Rectangular and circular patches share the same operating principle -- a resonant cavity formed by the metal patch, the grounded dielectric substrate, and the fringing fields at the edges -- but differ in mode structure, polarization control, and fabrication tolerance. The circular geometry was chosen for three reasons.
+Rectangular and circular patches share the same operating principle: a resonant cavity formed by the metal patch, the grounded dielectric substrate, and the fringing fields at the edges. However, the circular geometry was chosen for two reasons.
 
 First, the dominant $\mathrm{TM}_{11}$ mode of a circular patch has a field distribution with azimuthal symmetry, which simplifies generation of circular polarization by feeding at two points separated by $90^{\circ}$ in space and driven in quadrature. For a rectangular patch, circular polarization requires either a nearly square patch with truncated corners or a dual-feed with unequal slot perturbations; both are more sensitive to etching tolerances at 2.3~GHz than the symmetric circular case.
 
 Second, for a given resonant frequency the circular patch occupies less area than the circumscribed square patch and has no sharp corners where current crowding increases loss. On a 50~mm board, a radius near 19--20~mm (see Chapter~2) leaves a usable ground-plane ring for connectors and keep-out, while a $ \lambda_g/2 $ square patch with the same substrate would require a larger footprint once fringing corrections are included.
-
-Third, the project history included trials of a coplanar monopole, a rectangular patch with a slot perimeter equal to $\lambda_g$, and a hexagonal patch (commits \texttt{99f9ccd}, \texttt{5b98260}, \texttt{fad1ff9}). The hexagonal geometry was evaluated in ANSYS HFSS as a low-area alternative but showed stronger excitation of higher-order modes and less predictable axial ratio. The circular patch provided the most repeatable match to the cavity model and was retained for the final board revision (\texttt{CircularPatchV3.aedt}).
 
 \section{Objectives}
 
@@ -36,7 +32,7 @@ The design objectives for the parent antenna board are:
 
 \section{Document Structure}
 
-Chapter~2 develops the underlying theory -- cavity model, effective radius, and feed-point impedance -- and describes the three tool chains used: MATLAB Antenna Toolbox for rapid particle-swarm exploration, ANSYS HFSS (via AEDT files in \texttt{ansys/}) for full-wave finite-element verification, and KiCAD 10.0 for layout (\texttt{KiCAD/antennaBoard/}). Chapter~3 reports the numerical results from each stage, including the limits of the early rectangular-patch estimate and the current best MATLAB optimization log (\texttt{matlab/best.txt}). Chapter~4 interprets those results and records design decisions visible in git history, such as the move from a single MMCX feed to two orthogonal coax feeds and the substrate change from Rogers RO4350B to FR-408HR. Chapter~5 summarizes status and remaining verification steps before fabrication.
+Chapter~2 develops the underlying theory and describes the three tool chains used: MATLAB Antenna Toolbox for initial analysis, ANSYS HFSS (via AEDT files in \texttt{ansys/}) for full-wave finite-element verification, and KiCAD 10.0 for layout (\texttt{KiCAD/antennaBoard/}). Chapter~3 reports the numerical results from each stage, including the limits of the early rectangular-patch estimate and the current best MATLAB optimization log (\texttt{matlab/best.txt}). Chapter~4 interprets those results and records design decisions visible in git history, such as the move from a single MMCX feed to two orthogonal coax feeds and the substrate change from Rogers RO4350B to FR-408HR. Chapter~5 summarizes status and remaining verification steps before fabrication.
 
 \nomenclature{PCB}{Printed Circuit Board}
 \nomenclature{HFSS}{High Frequency Structure Simulator}

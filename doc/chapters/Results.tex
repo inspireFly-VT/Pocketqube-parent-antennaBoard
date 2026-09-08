@@ -8,7 +8,7 @@
 
 \chapter{Results}
 
-This chapter reports the numerical sizing, the outcome of the MATLAB particle-swarm exploration, the ANSYS HFSS full-wave results for the circular patch family, and the final KiCAD board geometry. Values are given directly from the repository state at commit \texttt{f9b39e9} (2026-04-28).
+This chapter reports the numerical sizing, the outcome of the MATLAB particle-swarm exploration, the ANSYS HFSS full-wave results for the circular patch family, and the final KiCAD board geometry. Values are given directly from the repository state on branch \texttt{to-be-reviewed\_V0.1} (2026-04-28).
 
 \section{Analytical Sizing at 2.305~GHz}
 
@@ -16,7 +16,7 @@ For $\epsilon_r = 3.68$ (FR-408HR, final stack) and $f_0 = 2.305$~GHz, inversion
 
 \begin{table}[H]
 \centering
-\caption{Analytical radius versus substrate. Fringing correction from Eq.~\ref{eq:ae} with $h$ as in the KiCAD stack is included.}
+\caption{Analytical radius versus substrate (with Eq.~\ref{eq:ae} correction)}
 \label{tab:radius}
 \begin{tabular}{l c c c c}
 \toprule
@@ -33,11 +33,12 @@ Free-space wavelength is $\lambda_0 = 130.06$~mm. Guided wavelength $\lambda_g =
 
 \section{MATLAB Particle-Swarm Exploration}
 
-The file \texttt{matlab/best.txt}, which records the best particle at the end of the logged run of 2025-10-02, reports:
+From \path{matlab/best.txt}:
 
 \begin{quote}
 \texttt{Board\_W = 40.351~mm, PatchFrac = 0.1477, FeedFrac = -0.531} \\
-\texttt{Gain = -6.97~dBi, $|Z| = 0.3~\Omega$ ($Z = 0.0 + j0.3~\Omega$), RL = 0.00~dB, AR = 2.33~dB}
+\texttt{Gain = -6.97~dBi, $|Z| = 0.3~\Omega$ ($Z = 0.0 + j0.3~\Omega$)} \\
+\texttt{RL = 0.00~dB, AR = 2.33~dB}
 \end{quote}
 
 The cost-function weights in that run were $w_{\mathrm{gain}}=8$, $w_{\mathrm{AR}}=10$, $w_{\mathrm{imp}}=1$, $w_{\mathrm{RL}}=1$, $w_{\mathrm{area}}=0.5$. The optimizer achieved the axial-ratio target (AR${}=2.33$~dB${}<3$~dB) but failed on impedance, return loss, and gain: $|Z|\approx 0.3$~$\Omega$ and RL${}\approx 0$~dB indicate that the feed location at $\mathrm{FeedFrac}=-0.531$ placed the probe near a current null or outside the patch, and the truncated-corner fraction $0.148$ was insufficient to split the two orthogonal modes at the chosen board size. Peak gain of $-6.97$~dBi is not usable for a downlink.
@@ -48,12 +49,17 @@ This run is retained as evidence that the analytical radius must be used as a ti
 
 \subsection{Evolution Across Geometries}
 
-\begin{itemize}[noitemsep]
-    \item \textbf{Rectangular / Patch 2} (\texttt{Patch 2.aedt}, \texttt{99f9ccd}--\texttt{7263f00}): early sweep of a rectangular patch with slot. $S_{11}$ minima were found near 2.3~GHz but with narrow 10~MHz bandwidth and strong sensitivity to $h$, consistent with the cavity bandwidth estimate of 1--2\%.
-    \item \textbf{Hexagonal patch} (\texttt{HexagonalPatch.aedt}, \texttt{5b98260}): hexagonal truncation reduced the circumscribed area by $\approx 15\%$ but introduced $\mathrm{TM}_{21}$ coupling that degraded axial ratio above 6~dB in simulation. The geometry was abandoned.
-    \item \textbf{Circular patch, single feed} (\texttt{CircularPatch.aedt}, \texttt{fad1ff9}): single probe at $\rho_0 \approx 5$~mm yielded $S_{11} < -14$~dB at 2.305~GHz, gain $\sim 4$~dBi, linear polarization. Used to calibrate the effective radius correction.
-    \item \textbf{Circular patch V3, dual coax} (\texttt{CircularPatchV3.aedt}, \texttt{235c732}): two orthogonal probes at $(\pm\rho_0,0)$ and $(0,\pm\rho_0)$ with independent wave ports. This is the geometry exported to KiCAD. With $\rho_0$ tuned to match 50~$\Omega$, simulation shows $S_{11} < -10$~dB for each port in isolation, inter-port coupling below $-18$~dB, and axial ratio below 3~dB when ports are driven in quadrature (see Discussion). The DXF exported for KiCAD (\path{KiCAD/CircularPatchV3.dxf}) and the STEP model (\path{KiCAD/CircularPatchV3.step}, added \texttt{2f72509}) are direct outputs of this AEDT project.
-\end{itemize}
+\begin{enumerate}
+
+    \item \textbf{Rectangular / Patch 2} (\texttt{Patch 2.aedt}, Nov 2025): early sweep of a rectangular patch with slot. $S_{11}$ minima were found near 2.3~GHz but with narrow 10~MHz bandwidth and strong sensitivity to $h$.
+
+    \item \textbf{Hexagonal patch} (\texttt{HexagonalPatch.aedt}, Dec 2025): hexagonal truncation reduced the circumscribed area by $\approx 15\%$ but introduced $\mathrm{TM}_{21}$ coupling that degraded axial ratio above 6~dB in simulation. The geometry was abandoned.
+
+    \item \textbf{Circular patch, single feed} (\texttt{CircularPatch.aedt}, Dec 2025): single probe at $\rho_0 \approx 5$~mm yielded $S_{11} < -14$~dB at 2.305~GHz, gain $\sim 4$~dBi, linear polarization.
+
+    \item \textbf{Circular patch V3, dual coax} (\texttt{CircularPatchV3.aedt}, Feb 2026): two orthogonal coax probes at $(\pm\rho_0,0)$ and $(0,\pm\rho_0)$ with independent wave ports. This is the geometry exported to KiCAD. With $\rho_0$ tuned to match 50~$\Omega$, simulation shows $S_{11} < -10$~dB for each port in isolation, inter-port coupling below $-18$~dB, and axial ratio below 3~dB when ports are driven in quadrature (see Discussion). The DXF exported for KiCAD (\path{KiCAD/CircularPatchV3.dxf}) and the STEP model (\path{KiCAD/CircularPatchV3.step}) are direct outputs of this AEDT project on branch \texttt{to-be-reviewed\_V0.1}.
+
+\end{enumerate}
 
 All HFSS projects use a radiation boundary offset $\lambda_0/4 \approx 32.5$~mm from the patch edge, an adaptive mesh refinement of at least 4 passes, and an interpolating sweep from 2.2 to 2.4~GHz with 401 points. Convergence criterion is $\Delta S < 0.02$.
 
@@ -130,17 +136,19 @@ A chronological set of HFSS screenshots is retained in \path{doc/history/}. Sele
 
 \section{KiCAD Board Implementation}
 
-The final board (\path{KiCAD/antennaBoard/antennaBoard.kicad_pcb}, rev. \texttt{5554f5c}) contains three footprints: \texttt{ANT1} (\texttt{Inspirefly:CircularPatchAntenna}) at $(157.99, 98.55)$~mm, and two Molex 732511350 U.FL-compatible connectors J1/J2 on F.Cu. An SMA edge-mount (Amphenol 132289) is retained on the schematic for laboratory testing but is not placed on the final panel.
+The final board (\path{KiCAD/antennaBoard/antennaBoard.kicad_pcb}, branch \texttt{to-be-reviewed\_V0.1}) contains three footprints: \texttt{ANT1} (\texttt{Inspirefly:CircularPatchAntenna}) at $(157.99, 98.55)$~mm, and two Molex 732511350 U.FL-compatible connectors J1/J2 on F.Cu. An SMA edge-mount (Amphenol 132289) is retained on the schematic for laboratory testing but is not placed on the final panel.
 
 Key construction:
-
-\begin{itemize}[noitemsep]
+\begin{itemize}
+    \setlength \itemsep{0.1em}
     \item Stackup as in Table~\ref{tab:stackup}, total thickness 1.3414~mm, copper finish None (ENIG to be specified at fabrication).
     \item Patch pad: custom polygon on F.Cu/F.Mask/F.Paste, net \texttt{Net-(ANT1-A)}, with two rectangular slot cutouts that form the radiating aperture. The pad is the only copper on F.Cu inside the courtyard.
     \item Feeds: two vias at $(157.99, 88.90)$~mm and $(169.93, 100.84)$~mm (board coordinates), each $0.6$~mm pad, $0.3$~mm drill, connecting F.Cu to B.Cu. Stitching vias tie the B.Cu ground to the connector shells.
     \item Board outline: rectangle $51.85 \times 51.89$~mm on Edge.Cuts, with 0.05~mm courtyard stroke.
     \item External feed network: the two U.FL ports are intended to connect via phase-matched coax to the APS-02-WBM-LP-DF-CC 2-way $0^{\circ}/90^{\circ}$ divider, which provides the quadrature phase for RHCP. Measured insertion loss of the divider (vendor data: $\sim 0.4$~dB) and cable loss are budgeted separately from antenna gain.
 \end{itemize}
+
+\newpage
 
 % Source - https://tex.stackexchange.com/a/282878
 % Posted by Fran, modified by community. See post 'Timeline' for change history
