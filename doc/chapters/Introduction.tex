@@ -25,7 +25,7 @@ The design objectives for the parent antenna board are:
 \begin{enumerate}[noitemsep]
     \item Resonant frequency $f_0 = 2.305$~GHz, with $S_{11} < -10$~dB across at least 20~MHz.
     \item Realized gain greater than 5~dBi at boresight (zenith) and axial ratio below 3~dB for the circularly polarized configuration.
-    \item Input impedance near 50~$\Omega$ at each coax feed, compatible with the Molex 732511350 U.FL-compatible connector and the external Mini-Circuits-style divider APS-02-WBM-LP-DF-CC.
+    \item Input impedance near 50~$\Omega$ at each coax feed, compatible with the Molex 732511350 U.FL-compatible connector and the external power divider APS-02-WBM-LP-DF-CC.
     \item Full integration into the KiCAD PCB stack without post-assembly tuning stubs, using the same fabrication stack available for the rest of the spacecraft electronics (FR-408HR multilayer).
     \item Reproducibility: all geometry originates from the ANSYS HFSS parametric model and is exported via DXF to the KiCAD footprint \texttt{Inspirefly:CircularPatchAntenna}, with version control in git.
 \end{enumerate}
