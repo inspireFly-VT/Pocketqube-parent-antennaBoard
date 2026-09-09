@@ -8,7 +8,7 @@
 
 \chapter{Methodology}
 
-This chapter states the analytical model used to size the antenna, the material and stackup choices, and the three-stage numerical flow that links MATLAB exploration, ANSYS HFSS full-wave simulation, and KiCAD layout. All equations are given in final form; no hedging is applied to the procedure.
+This chapter shows how the antenna was sized — the patch radius math, why FR-408HR was chosen over Rogers, and how the three tools (MATLAB for quick sweeps, HFSS for full-wave checks, KiCAD for layout) fit together. Equations are given in final form.
 
 \section{Circular Patch Theory}
 
@@ -30,14 +30,14 @@ The effective radius corrects for the field extension beyond the metal edge \cit
 \end{equation}
 Equation~\ref{eq:ae} is accurate for $a/h \gg 1$ and $ \epsilon_r \lesssim 10$, both satisfied here ($a/h \approx 140$ for $h\approx 0.14$~mm). In the design flow the physical radius $a$ is obtained by inverting Eqs.~\ref{eq:fres}--\ref{eq:ae} iteratively: choose $a$, compute $a_e$, evaluate $f_{11}$, and adjust $a$ until $f_{11}=2.305$~GHz.
 
-The quality factor, bandwidth, and radiation efficiency follow from the cavity loss budget (radiation, conductor, dielectric, surface wave). For a thin substrate ($h/\lambda_0 < 0.02$) the fractional bandwidth is approximately
+The quality factor, bandwidth, and radiation efficiency are set by the cavity loss budget (radiation, conductor, dielectric, surface wave). For a thin substrate ($h/\lambda_0 < 0.02$) the fractional bandwidth is approximately
 
 \begin{equation}
     \mathrm{BW} \approx 3.77 \, \frac{\epsilon_r -1}{\epsilon_r^{2}} \, \frac{h}{\lambda_0} \, \frac{a}{\lambda_0} ,
 \end{equation}
 which places the expected $-10$~dB bandwidth at 1--2\% for the stack used here. This is acceptable for a single channel but requires careful impedance matching.
 
-\subsection{Polarization and Feed}
+\subsection{Feed Polarization}
 
 Linear polarization is obtained with a single probe at radius $\rho_0$ from the centre along any diameter. Circular polarization is obtained with two probes at $(\rho_0, 0)$ and $(0, \rho_0)$ driven with equal amplitude and $90^{\circ}$ phase difference. The input resistance at a radial offset $\rho_0$ for the $\mathrm{TM}_{11}$ mode varies as
 
@@ -45,22 +45,29 @@ Linear polarization is obtained with a single probe at radius $\rho_0$ from the 
     R_{\mathrm{in}}(\rho_0) \approx R_{\mathrm{edge}} \, \frac{J_1^{2}(k \rho_0)}{J_1^{2}(k a_e)},
     \qquad k = \frac{2\pi f \sqrt{\epsilon_r}}{c},
 \end{equation}
-so the feed is moved inward from the edge until $R_{\mathrm{in}} \approx 50$~$\Omega$ and the reactance is tuned out. The final board implements two orthogonal coax feeds and relies on an external quadrature divider (APS-02-WBM-LP-DF-CC, branch \texttt{to-be-reviewed\_V0.1} “Impl 2 coax feed”) rather than an on-board branch-line hybrid, to keep the 50~mm board area available for the patch and to allow testing of linear vs.\ circular configurations by terminating one port.
+so the feed is moved inward from the edge until $R_{\mathrm{in}} \approx 50$~$\Omega$ and the reactance is tuned out. The final board implements two orthogonal coax feeds and relies on an external quadrature divider (APS-02-WBM-LP-DF-CC) rather than an on-board branch-line hybrid, to keep the 50~mm board area available for the patch and to allow testing of linear vs.\ circular configurations by terminating one port.
 
 \subsection{Early Rectangular Estimate}
 
-An early calculation in this repository (branch \texttt{to-be-reviewed\_V0.1} “Square aperture patch calculations”, retained below for provenance) treated the patch as a $\lambda_g/2$ square with slot perimeter equal to $\lambda_g$:
+Initially, a $\lambda_g/2$ square patch with slot perimeter equal to $\lambda_g$ was used:
 
 \begin{align}
     \lambda_0 &= \frac{c}{f} = \frac{2.99792458\times10^{8}}{2.305\times10^{9}} \approx 0.13006~\mathrm{m}, \\
     \lambda_g &= \frac{\lambda_0}{\sqrt{\epsilon_r}}, \\
     L &= \lambda_g/2, \qquad \text{slot perimeter} = \lambda_g .
 \end{align}
-With Rogers RO4350B ($\epsilon_r=3.66$, $h=0.168$~mm) this gives $\lambda_g \approx 35.54$~mm and $L\approx 17.77$~mm. This model is correct for a rectangular half-wave patch but was superseded for the circular geometry, where Eq.~\ref{eq:fres} governs. It is retained in git history as the starting point for the MATLAB particle-swarm search.
+With Rogers RO4350B ($\epsilon_r=3.66$, $h=0.168$~mm) this gives $\lambda_g \approx 35.54$~mm and $L\approx 17.77$~mm. This model is correct for a rectangular half-wave patch but was superseded for the circular geometry, where Eq.~\ref{eq:fres} governs. It remains in the repo for record-keeping.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.92\textwidth]{history/10-15-2025.png}
+\caption{Earliest HFSS model}
+\label{fig:hist-2025-10-15}
+\end{figure}
 
 \section{Materials and PCB Stackup}
 
-The initial analytical estimate assumed Rogers RO4350B ($\epsilon_r=3.66\pm0.05$, $\tan\delta=0.0037$ at 10~GHz). The fabricated stack was moved to Isola FR-408HR ($\epsilon_r=3.68$, $\tan\delta=0.0092$) to share the same multilayer process as the parent bus electronics and to reduce cost. The final stack defined in \path{KiCAD/antennaBoard/antennaBoard.kicad_pcb} (branch \texttt{to-be-reviewed\_V0.1}) is a 4-copper-layer board with total thickness 1.3414~mm:
+The initial analytical estimate assumed Rogers RO4350B ($\epsilon_r=3.66\pm0.05$, $\tan\delta=0.0037$ at 10~GHz). The fabricated stack was moved to Isola FR-408HR ($\epsilon_r=3.68$, $\tan\delta=0.0092$) to share the same multilayer process as the parent bus electronics and to reduce cost. The final stack defined in \path{KiCAD/antennaBoard/antennaBoard.kicad_pcb} is a 4-copper-layer board with total thickness 1.3414~mm:
 
 \begin{table}[H]
 \centering
@@ -83,16 +90,23 @@ Total & & 1.3414 & \\
 \end{tabular}
 \end{table}
 
-The RF patch resides on F.Cu; In1.Cu and In2.Cu are used for routing and shielding; B.Cu is the solid ground plane. Two through-vias (pad $0.6$~mm, drill $0.3$~mm) connect each coax centre conductor from the patch layer to the feed network on B.Cu. The MATLAB exploration model (\texttt{matlab/MPA\_opt\_swrm.m}) approximates this stack as a single dielectric of $h=0.0994$~mm, $\epsilon_r=4.0$, $\tan\delta=0$ with 0.035~mm copper, which is thinner than the fabricated stack and represents a conservative bandwidth estimate.
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.92\textwidth]{history/04-07-2026-6.png}
+\caption{HFSS model, final circular patch}
+\label{fig:hist-2026-04-07-model}
+\end{figure}
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.92\textwidth]{history/10-15-2025.png}
-\caption{Earliest HFSS model}
-\label{fig:hist-2025-10-15}
+\includegraphics[width=0.92\textwidth]{history/04-07-2026-1.png}
+\caption{Circular patch design parameters}
+\label{fig:hist-2026-04-07-table}
 \end{figure}
 
-\section{MATLAB Rapid Exploration}
+The RF patch resides on F.Cu; In1.Cu and In2.Cu are used for routing and shielding; B.Cu is the solid ground plane. Two through-vias (pad $0.6$~mm, drill $0.3$~mm) connect each coax centre conductor from the patch layer to the feed network on B.Cu. The MATLAB exploration model (\texttt{matlab/MPA\_opt\_swrm.m}) approximates this stack as a single dielectric of $h=0.0994$~mm, $\epsilon_r=4.0$, $\tan\delta=0$ with 0.035~mm copper, which is thinner than the fabricated stack and represents a conservative bandwidth estimate.
+
+\section{MATLAB}
 
 Rapid design-space exploration was performed in MATLAB R2024b Antenna Toolbox (\path{matlab/MPA_opt_swrm.m}). The script builds a \texttt{pcbStack} with a rectangular board of side $1.5\,W$ and a square patch of side $W$ with two opposite corners truncated by $45^{\circ}$ squares of side $W\sqrt{2}\,\times\mathrm{PatchFrac}$. This chamfered microstrip patch antenna (CMPA) is a rectangular analogue of the circular patch with truncated corners for circular polarization; it was used because \texttt{pcbStack} does not natively support an arbitrary circular polygon with vias in the optimization loop, while still capturing the dependence of gain, return loss, and axial ratio on size, truncation, and feed position.
 
@@ -113,20 +127,20 @@ with $c_{\mathrm{gain}}=\max(0,(5-G)/5)$, $c_{\mathrm{imp}}=|Z-50|/50$, $c_{\mat
 
 Optimization logs are written to \texttt{matlab/logs/run\_log\_n.txt} with an automatic incrementing filename (\texttt{nextLogFile}). Parallel execution uses 6 workers (\texttt{parpool local 6} or \texttt{SLURM\_CPUS\_PER\_TASK} when run on a cluster).
 
-\section{ANSYS HFSS Full-Wave Model}
+\section{ANSYS HFSS}
 
-Full-wave verification is performed in ANSYS Electronics Desktop / HFSS, which solves the time-harmonic Maxwell equations by the finite-element method. Four AEDT projects are retained in \path{ansys/} for provenance:
+Full-wave verification is performed in ANSYS HFSS, which solves the time-harmonic Maxwell equations by the finite-element method. Four AEDT projects are retained in \path{ansys/} for provenance:
 
 \begin{enumerate}[itemsep=-1ex]
     \item \texttt{Patch 2.aedt}: early rectangular/coplanar iteration (Nov 2025).
     \item \texttt{HexagonalPatch.aedt}: hexagonal patch variant to reduce area (Dec 2025).
     \item \texttt{CircularPatch.aedt}: first circular patch with single probe (Dec 2025).
-    \item \texttt{CircularPatchV3.aedt}: final circular patch with two orthogonal coax feeds for the 1U face (Feb 2026, “Two coax approach for 1U design”).
+    \item \texttt{CircularPatchV3.aedt}: final circular patch with two orthogonal coax feeds for the 1U face (Feb 2026).
 \end{enumerate}
 
 Each model defines the patch radius as a design variable, the FR-408HR (or early RO4350B) substrate, a finite ground plane matching the 50~mm board, a radiation boundary at $\lambda_0/4$ distance, and lumped or wave ports at the coax feeds. Frequency sweeps are centered at 2.305~GHz with interpolating sweep to capture $S_{11}$ and far-field gain/axial ratio. Far-field setup computes realized gain, directivity, and axial ratio versus $\theta,\phi$. Convergence is judged by $\Delta S < 0.02$ between adaptive passes.
 
-\section{KiCAD Layout and DXF Flow}
+\section{KiCAD}
 
 Layout is implemented in KiCAD 10.0 (\path{KiCAD/antennaBoard/}). The antenna was exported as a DXF, imported to KiCAD, and filled as footprint \path{Inspirefly.pretty/CircularPatchAntenna.kicad_mod}. The schematic (\texttt{antennaBoard.kicad\_sch}) contains:
 
@@ -136,9 +150,9 @@ Layout is implemented in KiCAD 10.0 (\path{KiCAD/antennaBoard/}). The antenna wa
     \item An SMA edge-mount (Amphenol 132289) retained as an alternative test port.
 \end{enumerate}
 
-The two coax centre pins are routed on B.Cu to the patch vias; the ground shells connect to the B.Cu ground plane with stitching vias. Design-rule checks enforce 0.2~mm trace width and 0.3~mm drill. Gerber export uses the KiCAD 10.0 \texttt{pcbplotparams} with Gerber X2 attributes and Excellon drill.
+The two coax centre pins are routed on B.Cu to the patch vias. DRC enforces 0.2~mm trace width and 0.3~mm drill. Gerber export uses the KiCAD 10.0 \texttt{pcbplotparams} with Gerber X2 attributes and Excellon drill.
 
-\section{Version Control and Archived Iterations}
+\section{Version Control}
 
 Historical HFSS screenshots retained in \path{doc/history/} complement git history. Early iterations (\texttt{10-30-2025-1.png} to \texttt{11-06-2025-1.png}) capture the rectangular patch with microstrip feed, slit tuning, and copper thickness experiments; later captures (\texttt{04-07-2026-*} ) document the converged circular patch on Isola FR408HR. These images are referenced in Chapter~3 and provide a visual timeline alongside the AEDT files.
 
@@ -152,19 +166,24 @@ All sources are tracked in git (\path{Pocketqube-parent-antennaBoard}):
 \toprule
 Date & Message \\
 \midrule
-2025-10-21 & Add ansys monopole patch design \\
+2025-10-21 & Add ansys patch design \\
 2025-10-30 & Update patch \\
 2025-11-02 & Adjust patch material \& thickness \\
 2025-11-06 & Update Patch 2.aedt \\
-2025-11-20 & Square aperture patch calculations (Methodology.tex) \\
+2025-11-20 & Square patch calculations \\
 2025-12-04 & Create HexagonalPatch.aedt \\
 2025-12-04 & Create CircularPatch.aedt \\
-2026-02-19 & Create CircularPatchV3.aedt -- Two coax approach for 1U design \\
+2026-02-19 & Create CircularPatchV3.aedt \\
 2026-03-01 & Import patch to KiCAD \\
-2026-04-07 & Add coax (Connector\_Coaxial library, DXF footprint) \\
-2026-04-28 & Impl 2 coax feed -- Use external power divider APS-02-WBM-LP-DF-CC \\
+2026-04-28 & Impl 2 coax feed \\
 \bottomrule
 \end{tabular}
 \end{table}
 
 The \texttt{LOCK.txt} convention is used to serialize KiCAD edits; each \texttt{antennaBoard-YYYY-MM-DD\_HHMMSS.zip} backup in \texttt{KiCAD/antennaBoard/antennaBoard-backups/} records the board state at that time. MATLAB logs in \texttt{matlab/logs/} are not tracked beyond the representative \texttt{best.txt} to keep the repository small; the full \texttt{Antenna\_minimalistic.mat} archives a converged Antenna Toolbox object for reproduction.
+
+\nomenclature{BW}{Bandwidth}
+\nomenclature{AEDT}{Ansys Electronics Desktop}
+\nomenclature{DXF}{Drawing Exchange Format}
+\nomenclature{STEP}{Standard for the Exchange of Product Data}
+\nomenclature{SMA}{SubMiniature version A}
